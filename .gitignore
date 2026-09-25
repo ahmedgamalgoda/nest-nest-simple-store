@@ -2,3 +2,8 @@ node_modules
 .env
 .vscode
 .idea
+
+prompts.md
+
+.agents
+skills-lock.json
