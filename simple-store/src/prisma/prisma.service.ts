@@ -12,7 +12,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Access User queries:
-   * e.g. this.prisma.user.insert({ ... }), this.prisma.user.where({ ... }).first()
+   * e.g. this.prisma.user.create({ ... }), this.prisma.user.where({ ... }).first()
    */
   get user() {
     return this.client.orm.public.User;
@@ -20,10 +20,26 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Access Product queries:
-   * e.g. this.prisma.product.insert({ ... }), this.prisma.product.where({ ... }).all()
+   * e.g. this.prisma.product.create({ ... }), this.prisma.product.where({ ... }).all()
    */
   get product() {
     return this.client.orm.public.Product;
+  }
+
+  /**
+   * Access Order queries:
+   * e.g. this.prisma.order.create({ ... }), this.prisma.order.where({ ... }).all()
+   */
+  get order() {
+    return this.client.orm.public.Order;
+  }
+
+  /**
+   * Access OrderItem queries:
+   * e.g. this.prisma.orderItem.create({ ... }), this.prisma.orderItem.where({ ... }).all()
+   */
+  get orderItem() {
+    return this.client.orm.public.OrderItem;
   }
 
   /**

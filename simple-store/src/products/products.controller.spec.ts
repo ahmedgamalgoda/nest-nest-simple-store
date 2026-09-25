@@ -6,6 +6,9 @@ import { ProductsService } from './products.service.js';
 import { CreateProductDto } from './dto/create-product.dto.js';
 import { UpdateProductDto } from './dto/update-product.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
+import { RolesGuard } from '../auth/guards/roles.guard.js';
+import { ROLES_KEY } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../auth/enums/role.enum.js';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -83,33 +86,51 @@ describe('ProductsController', () => {
     expect(service.remove).toHaveBeenCalledWith('prod-uuid-1');
   });
 
-  describe('Guard Protection Rules', () => {
-    it('should protect create with JwtAuthGuard', () => {
+  describe('Guard Protection & Role-Based Access Rules', () => {
+    it('should protect create with JwtAuthGuard and RolesGuard requiring admin role', () => {
       const guards = Reflect.getMetadata('__guards__', controller.create);
       expect(guards).toBeDefined();
       expect(guards).toContain(JwtAuthGuard);
+      expect(guards).toContain(RolesGuard);
+
+      const roles = Reflect.getMetadata(ROLES_KEY, controller.create);
+      expect(roles).toEqual([Role.ADMIN]);
     });
 
-    it('should protect update with JwtAuthGuard', () => {
+    it('should protect update with JwtAuthGuard and RolesGuard requiring admin role', () => {
       const guards = Reflect.getMetadata('__guards__', controller.update);
       expect(guards).toBeDefined();
       expect(guards).toContain(JwtAuthGuard);
+      expect(guards).toContain(RolesGuard);
+
+      const roles = Reflect.getMetadata(ROLES_KEY, controller.update);
+      expect(roles).toEqual([Role.ADMIN]);
     });
 
-    it('should protect remove with JwtAuthGuard', () => {
+    it('should protect remove with JwtAuthGuard and RolesGuard requiring admin role', () => {
       const guards = Reflect.getMetadata('__guards__', controller.remove);
       expect(guards).toBeDefined();
       expect(guards).toContain(JwtAuthGuard);
+      expect(guards).toContain(RolesGuard);
+
+      const roles = Reflect.getMetadata(ROLES_KEY, controller.remove);
+      expect(roles).toEqual([Role.ADMIN]);
     });
 
-    it('should leave findAll public without guards', () => {
+    it('should leave findAll public without guards or role metadata', () => {
       const guards = Reflect.getMetadata('__guards__', controller.findAll);
       expect(guards).toBeUndefined();
+
+      const roles = Reflect.getMetadata(ROLES_KEY, controller.findAll);
+      expect(roles).toBeUndefined();
     });
 
-    it('should leave findOne public without guards', () => {
+    it('should leave findOne public without guards or role metadata', () => {
       const guards = Reflect.getMetadata('__guards__', controller.findOne);
       expect(guards).toBeUndefined();
+
+      const roles = Reflect.getMetadata(ROLES_KEY, controller.findOne);
+      expect(roles).toBeUndefined();
     });
   });
 

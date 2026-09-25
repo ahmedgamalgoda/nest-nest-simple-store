@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { AuthService } from './auth.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { Role } from './enums/role.enum.js';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -14,6 +15,7 @@ describe('AuthService', () => {
     id: 'user-uuid-1',
     email: 'alice@example.com',
     name: 'Alice',
+    role: Role.USER,
     password: '$2b$10$hashedpasswordstring',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -54,7 +56,7 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('should successfully register a new user with a hashed password', async () => {
+    it('should successfully register a new user with a hashed password and default role', async () => {
       mockPrismaService.user.first.mockResolvedValue(null);
       mockPrismaService.user.create.mockResolvedValue(mockUser);
 
@@ -71,14 +73,39 @@ describe('AuthService', () => {
         email: 'alice@example.com',
         password: '$2b$10$hashedpasswordstring',
         name: 'Alice',
+        role: Role.USER,
       });
       expect(result.user).toEqual({
         id: mockUser.id,
         email: mockUser.email,
         name: mockUser.name,
+        role: Role.USER,
         createdAt: mockUser.createdAt,
       });
       expect((result.user as any).password).toBeUndefined();
+    });
+
+    it('should register an admin user when role is specified', async () => {
+      const mockAdminUser = { ...mockUser, role: Role.ADMIN };
+      mockPrismaService.user.first.mockResolvedValue(null);
+      mockPrismaService.user.create.mockResolvedValue(mockAdminUser);
+
+      vi.spyOn(bcrypt, 'hash').mockImplementation(async () => '$2b$10$hashedpasswordstring');
+
+      const result = await service.register({
+        email: 'admin@example.com',
+        password: 'password123',
+        name: 'Admin User',
+        role: Role.ADMIN,
+      });
+
+      expect(mockPrismaService.user.create).toHaveBeenCalledWith({
+        email: 'admin@example.com',
+        password: '$2b$10$hashedpasswordstring',
+        name: 'Admin User',
+        role: Role.ADMIN,
+      });
+      expect(result.user.role).toBe(Role.ADMIN);
     });
 
     it('should throw ConflictException if user with email already exists', async () => {
@@ -95,7 +122,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should successfully login and return an access token', async () => {
+    it('should successfully login and return an access token containing role', async () => {
       mockPrismaService.user.first.mockResolvedValue(mockUser);
       vi.spyOn(bcrypt, 'compare').mockImplementation(async () => true);
 
@@ -109,11 +136,13 @@ describe('AuthService', () => {
         id: mockUser.id,
         email: mockUser.email,
         name: mockUser.name,
+        role: Role.USER,
       });
       expect(mockJwtService.signAsync).toHaveBeenCalledWith({
         sub: mockUser.id,
         email: mockUser.email,
         name: mockUser.name,
+        role: Role.USER,
       });
     });
 

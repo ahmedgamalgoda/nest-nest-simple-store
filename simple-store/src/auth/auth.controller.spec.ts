@@ -5,6 +5,7 @@ import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { Role } from './enums/role.enum.js';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -16,6 +17,7 @@ describe('AuthController', () => {
       id: 'user-uuid-1',
       email: 'bob@example.com',
       name: 'Bob',
+      role: Role.USER,
       createdAt: new Date().toISOString(),
     },
   };
@@ -26,6 +28,7 @@ describe('AuthController', () => {
       id: 'user-uuid-1',
       email: 'bob@example.com',
       name: 'Bob',
+      role: Role.USER,
     },
   };
 
@@ -105,11 +108,23 @@ describe('AuthController', () => {
       expect(errors.some((e) => e.property === 'name')).toBe(true);
     });
 
-    it('should pass with valid register fields', async () => {
+    it('should fail when role is invalid', async () => {
       const dto = plainToInstance(RegisterDto, {
         email: 'bob@example.com',
         password: 'password123',
         name: 'Bob',
+        role: 'invalid-role',
+      });
+      const errors = await validate(dto);
+      expect(errors.some((e) => e.property === 'role')).toBe(true);
+    });
+
+    it('should pass with valid register fields including role', async () => {
+      const dto = plainToInstance(RegisterDto, {
+        email: 'bob@example.com',
+        password: 'password123',
+        name: 'Bob',
+        role: Role.ADMIN,
       });
       const errors = await validate(dto);
       expect(errors.length).toBe(0);
