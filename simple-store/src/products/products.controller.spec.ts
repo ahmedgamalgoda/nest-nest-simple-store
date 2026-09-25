@@ -5,6 +5,7 @@ import { ProductsController } from './products.controller.js';
 import { ProductsService } from './products.service.js';
 import { CreateProductDto } from './dto/create-product.dto.js';
 import { UpdateProductDto } from './dto/update-product.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -80,6 +81,36 @@ describe('ProductsController', () => {
     const result = await controller.remove('prod-uuid-1');
     expect(result.product).toEqual(mockProduct);
     expect(service.remove).toHaveBeenCalledWith('prod-uuid-1');
+  });
+
+  describe('Guard Protection Rules', () => {
+    it('should protect create with JwtAuthGuard', () => {
+      const guards = Reflect.getMetadata('__guards__', controller.create);
+      expect(guards).toBeDefined();
+      expect(guards).toContain(JwtAuthGuard);
+    });
+
+    it('should protect update with JwtAuthGuard', () => {
+      const guards = Reflect.getMetadata('__guards__', controller.update);
+      expect(guards).toBeDefined();
+      expect(guards).toContain(JwtAuthGuard);
+    });
+
+    it('should protect remove with JwtAuthGuard', () => {
+      const guards = Reflect.getMetadata('__guards__', controller.remove);
+      expect(guards).toBeDefined();
+      expect(guards).toContain(JwtAuthGuard);
+    });
+
+    it('should leave findAll public without guards', () => {
+      const guards = Reflect.getMetadata('__guards__', controller.findAll);
+      expect(guards).toBeUndefined();
+    });
+
+    it('should leave findOne public without guards', () => {
+      const guards = Reflect.getMetadata('__guards__', controller.findOne);
+      expect(guards).toBeUndefined();
+    });
   });
 
   describe('DTO Validation Rules', () => {
