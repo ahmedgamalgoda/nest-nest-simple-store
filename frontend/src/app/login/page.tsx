@@ -27,8 +27,8 @@ function LoginForm() {
       await login(email, password);
       // Requirement: Redirect to product page after successful response
       router.push(redirectPath);
-    } catch (err: any) {
-      setError(err.message || 'Invalid email or password');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Invalid email or password');
     } finally {
       setIsLoading(false);
     }
@@ -150,7 +150,7 @@ function LoginForm() {
         {/* Footer Link */}
         <div className="text-center pt-2">
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link
               href="/register"
               className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"

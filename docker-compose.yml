@@ -11,13 +11,10 @@ services:
       POSTGRES_PASSWORD: postgrespassword
       POSTGRES_DB: simple_store
     ports:
-      # Expose port to host machine so migrations and tools can connect
       - "5432:5432"
     volumes:
-      # Persist database data across container restarts and recreations
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      # Periodically check that PostgreSQL is ready to accept SQL queries
       test: ["CMD-SHELL", "pg_isready -U postgres -d simple_store"]
       interval: 5s
       timeout: 5s
@@ -30,23 +27,20 @@ services:
   # ----------------------------------------------------
   backend:
     build:
-      context: .
+      context: ./simple-store
       dockerfile: Dockerfile
     container_name: simple_store_backend
     restart: unless-stopped
     ports:
-      # Map host port 3001 to container port 3001
       - "3001:3001"
     environment:
       NODE_ENV: production
       PORT: 3001
-      # Connects to the 'postgres' service container using Docker internal DNS
       DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/simple_store?schema=public
       JWT_SECRET: super-secret-jwt-key-for-simple-store
       JWT_EXPIRES_IN: 1d
     depends_on:
       postgres:
-        # Wait until PostgreSQL passes healthcheck before starting backend
         condition: service_healthy
     networks:
       - store-network
