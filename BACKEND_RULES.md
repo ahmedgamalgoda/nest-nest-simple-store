@@ -1,6 +1,6 @@
 # Backend API Documentation & Strict Rules
 
-This document specifies the exact contracts, strict validation rules, authentication requirements, and response formats implemented by the NestJS backend (`simple-store`). Frontends interacting with this backend must adhere to these specifications.
+This document specifies the exact contracts, strict validation rules, authentication requirements, and response formats implemented by the NestJS backend (`backend`). Frontends interacting with this backend must adhere to these specifications.
 
 ---
 

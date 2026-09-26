@@ -9,7 +9,7 @@ This guide explains the containerization setup for running the NestJS backend an
 Run both the backend API and PostgreSQL with one command:
 
 ```bash
-# From the repository root (or inside simple-store/):
+# From the repository root (or inside backend/):
 docker compose up --build
 ```
 
@@ -30,7 +30,7 @@ docker compose down
 
 ---
 
-## 2. Dockerfile Deep Dive (`simple-store/Dockerfile`)
+## 2. Dockerfile Deep Dive (`backend/Dockerfile`)
 
 The backend uses a **multi-stage build** pattern to produce a secure, minimal container image.
 
@@ -131,7 +131,7 @@ services:
 
   backend:
     build:
-      context: ./simple-store
+      context: ./backend
       dockerfile: Dockerfile
     container_name: simple_store_backend
     restart: unless-stopped

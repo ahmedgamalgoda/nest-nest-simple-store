@@ -1,6 +1,6 @@
 # Backend API Reference & Contracts
 
-This document is the authoritative specification for the NestJS REST API (`simple-store`).
+This document is the authoritative specification for the NestJS REST API (`backend`).
 
 ---
 

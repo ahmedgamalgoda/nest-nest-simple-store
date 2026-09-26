@@ -107,7 +107,7 @@ sequenceDiagram
 
 ## 3. Database Schema & Data Models
 
-The Prisma data contract is defined at `simple-store/src/prisma/contract.prisma`:
+The Prisma data contract is defined at `backend/src/prisma/contract.prisma`:
 
 ```mermaid
 erDiagram

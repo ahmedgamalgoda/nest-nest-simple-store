@@ -47,7 +47,7 @@ Ensure PostgreSQL is running locally on port `5432` with a database named `simpl
 
 #### 2. Start NestJS Backend
 ```bash
-cd simple-store
+cd backend
 npm install
 npm run seed       # Seeds sample products and admin/customer accounts
 npm run start:dev  # Runs backend on http://localhost:3001
@@ -83,7 +83,7 @@ nest-nest-store/
 │   ├── FRONTEND_GUIDE.md                # Next.js 16 components & context state
 │   └── DOCKER_GUIDE.md                  # Dockerfile & Compose orchestration
 ├── docker-compose.yml                   # Root Docker Compose orchestrator
-├── simple-store/                        # NestJS Backend API
+├── backend/                             # NestJS Backend API
 │   ├── src/
 │   │   ├── auth/                        # JWT authentication & RBAC guards
 │   │   ├── common/                      # TransformInterceptor & GlobalExceptionFilter
