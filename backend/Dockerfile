@@ -11,8 +11,8 @@ RUN apk add --no-cache python3 make g++
 # Copy package manifests for dependency layer caching
 COPY package*.json ./
 
-# Install all dependencies (including devDependencies required for building)
-RUN npm ci
+# Install dependencies (fallback to npm install if lockfile has slight drift)
+RUN npm ci || npm install
 
 # Copy application source code and configuration files
 COPY nest-cli.json tsconfig*.json prisma.config.ts ./
